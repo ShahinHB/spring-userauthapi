@@ -5,6 +5,7 @@ import com.example.userauthapi.dto.LoginRequest;
 import com.example.userauthapi.entity.UserEntity;
 import com.example.userauthapi.exception.UnauthorizedException;
 import com.example.userauthapi.repository.UserRepository;
+import com.example.userauthapi.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public String register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -45,6 +47,6 @@ public class AuthService {
             throw new UnauthorizedException("Invalid username or password");
         }
 
-        return "Login successful";
+        return jwtUtil.generateToken(user.getUsername());
     }
 }
